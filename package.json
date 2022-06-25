@@ -5,6 +5,10 @@
   "main": "index.js",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "deploy": "ts-node --files ./scripts/Ballot/deployment.ts red green orange blue black purple",
+    "test": "hardhat test"
+  },
   "dependencies": {
     "chai": "^4.3.6",
     "hardhat": "^2.9.3"

@@ -2,6 +2,16 @@
 
 Encode Bootcamp: First Assignment
 
+## Setup
+
+1. Make sure you create a .env file with the real exported values as shown in .env.example.
+
+2. To deploy the Ballot run:
+
+```
+yarn run ts-node --files .\scripts\Ballot\deployment.ts "arg1" "arg2" "arg3
+```
+
 ## Homework
 
 - Read the references
