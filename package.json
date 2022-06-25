@@ -6,7 +6,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "deploy": "ts-node --files ./scripts/Ballot/deployment.ts red green orange blue black purple",
+    "script:giveVotingRights": "ts-node --files ./scripts/Ballot/giveVotingRights.ts",
+    "script:deploy": "ts-node --files ./scripts/Ballot/deployment.ts",
     "test": "hardhat test"
   },
   "dependencies": {
