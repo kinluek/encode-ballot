@@ -70,9 +70,11 @@ contract Ballot {
     function delegate(address to) external {
         // assigns reference
         Voter storage sender = voters[msg.sender];
+        require(sender.weight >= 1, "You must have the right to vote.");
         require(!sender.voted, "You already voted.");
 
         require(to != msg.sender, "Self-delegation is disallowed.");
+
 
         // Forward the delegation as long as
         // `to` also delegated.

@@ -1,4 +1,6 @@
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
+import { BigNumber, Signer } from "ethers";
 import { ethers } from "hardhat";
 import { Ballot } from "../../typechain";
 
@@ -17,9 +19,29 @@ async function giveRightToVote(ballotContract: Ballot, voterAddress: any) {
   await tx.wait();
 }
 
+async function vote(
+  ballotContract: Ballot,
+  voterAccount: Signer,
+  proposal: number
+) {
+  const tx = await ballotContract.connect(voterAccount).vote(proposal);
+  await tx.wait();
+}
+
+async function delegate(
+  ballotContract: Ballot,
+  delegator: SignerWithAddress,
+  delegatee: SignerWithAddress
+) {
+  const tx = await ballotContract
+    .connect(delegator)
+    .delegate(delegatee.address);
+  await tx.wait();
+}
+
 describe("Ballot", function () {
   let ballotContract: Ballot;
-  let accounts: any[];
+  let accounts: SignerWithAddress[];
 
   this.beforeEach(async function () {
     accounts = await ethers.getSigners();
@@ -85,16 +107,118 @@ describe("Ballot", function () {
   });
 
   describe("when the voter interact with the vote function in the contract", function () {
-    // TODO
-    it("is not implemented", async function () {
-      throw new Error("Not implemented");
+    it("voter should not be able to vote if they have no right", async function () {
+      const voter = accounts[1];
+      await expect(vote(ballotContract, voter, 0)).to.be.revertedWith(
+        "Has no right to vote"
+      );
+    });
+
+    it("voter should should be able to vote if they have been given the right", async function () {
+      const voter = accounts[1];
+      await giveRightToVote(ballotContract, voter.address);
+      await vote(ballotContract, voter, 0);
+      const proposal = await ballotContract.proposals(0);
+      expect(proposal.voteCount).to.equal(BigNumber.from(1));
+    });
+
+    it("voter should not be able to vote twice", async function () {
+      const voter = accounts[1];
+      await giveRightToVote(ballotContract, voter.address);
+      await vote(ballotContract, voter, 0);
+      const proposal = await ballotContract.proposals(0);
+      expect(proposal.voteCount).to.equal(BigNumber.from(1));
+      await expect(vote(ballotContract, voter, 0)).to.be.revertedWith(
+        "Already voted."
+      );
+    });
+
+    it("voter should be able to apply delegated weight to vote", async function () {
+      const voter = accounts[1];
+      const delegator = accounts[2];
+      await giveRightToVote(ballotContract, voter.address);
+      await giveRightToVote(ballotContract, delegator.address);
+      await delegate(ballotContract, delegator, voter);
+      await vote(ballotContract, voter, 0);
+      const proposal = await ballotContract.proposals(0);
+      expect(proposal.voteCount).to.equal(BigNumber.from(2));
     });
   });
 
   describe("when the voter interact with the delegate function in the contract", function () {
-    // TODO
-    it("is not implemented", async function () {
-      throw new Error("Not implemented");
+    it("voter should not be able to delegate if they have no right to vote", async function () {
+      const delegator = accounts[1];
+      const delegatee = accounts[2];
+      await giveRightToVote(ballotContract, delegatee.address);
+      await expect(
+        delegate(ballotContract, delegator, delegatee)
+      ).to.be.revertedWith("You must have the right to vote.");
+    });
+
+    it("voter should not be able to delegate to voter who has no right to vote", async function () {
+      const delegator = accounts[1];
+      const delegatee = accounts[2];
+      await giveRightToVote(ballotContract, delegator.address);
+      await expect(
+        delegate(ballotContract, delegator, delegatee)
+      ).to.be.revertedWith("");
+    });
+
+    it("voter should not be able to delegate if they have already voted", async function () {
+      const delegator = accounts[1];
+      const delegatee = accounts[2];
+      await giveRightToVote(ballotContract, delegator.address);
+      await giveRightToVote(ballotContract, delegatee.address);
+      await vote(ballotContract, delegator, 0);
+      await expect(
+        delegate(ballotContract, delegator, delegatee)
+      ).to.be.revertedWith("You already voted.");
+    });
+
+    it("voter should not be able to delegate to themselves", async function () {
+      const delegator = accounts[1];
+      await giveRightToVote(ballotContract, delegator.address);
+      await expect(
+        delegate(ballotContract, delegator, delegator)
+      ).to.be.revertedWith("Self-delegation is disallowed.");
+    });
+
+    it("voter should be able to delegate to voter who has right to vote", async function () {
+      const delegator = accounts[1];
+      const delegatee = accounts[2];
+      await giveRightToVote(ballotContract, delegator.address);
+      await giveRightToVote(ballotContract, delegatee.address);
+      await delegate(ballotContract, delegator, delegatee);
+      const delegateeVoter = await ballotContract.voters(delegatee.address);
+      expect(delegateeVoter.weight).to.equal(BigNumber.from(2));
+    });
+
+    it("voters delegation should follow the delegation path", async function () {
+      const delegator = accounts[1];
+      const delegatee1 = accounts[2];
+      const delegatee2 = accounts[3];
+      await giveRightToVote(ballotContract, delegator.address);
+      await giveRightToVote(ballotContract, delegatee1.address);
+      await giveRightToVote(ballotContract, delegatee2.address);
+      await delegate(ballotContract, delegatee1, delegatee2);
+      await delegate(ballotContract, delegator, delegatee1);
+      const delegatorVoter = await ballotContract.voters(delegator.address);
+      expect(delegatorVoter.delegate).to.equal(delegatee2.address);
+      const delegatee2Voter = await ballotContract.voters(delegatee2.address);
+      expect(delegatee2Voter.weight).to.equal(BigNumber.from(3));
+    });
+
+    it("voters delegation should add to the proposal count if delegatee has voted for it", async function () {
+      const delegator = accounts[1];
+      const delegatee = accounts[2];
+      await giveRightToVote(ballotContract, delegator.address);
+      await giveRightToVote(ballotContract, delegatee.address);
+      await vote(ballotContract, delegatee, 0);
+      let proposal = await ballotContract.proposals(0);
+      expect(proposal.voteCount).to.equal(BigNumber.from(1));
+      await delegate(ballotContract, delegator, delegatee);
+      proposal = await ballotContract.proposals(0);
+      expect(proposal.voteCount).to.equal(BigNumber.from(2));
     });
   });
 
