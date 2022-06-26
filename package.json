@@ -8,6 +8,7 @@
   "scripts": {
     "script:giveVotingRights": "ts-node --files ./scripts/Ballot/giveVotingRights.ts",
     "script:deploy": "ts-node --files ./scripts/Ballot/deployment.ts",
+    "script:queryProposals": "ts-node --files ./scripts/Ballot/queryProposals.ts",
     "test": "hardhat test"
   },
   "dependencies": {
