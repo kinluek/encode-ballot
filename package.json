@@ -10,6 +10,7 @@
     "script:deploy": "ts-node --files ./scripts/Ballot/deployment.ts",
     "script:queryProposals": "ts-node --files ./scripts/Ballot/queryProposals.ts",
     "script:castVote": "ts-node --files ./scripts/Ballot/castVote.ts",
+    "script:delegateVote": "ts-node --files ./scripts/Ballot/delegateVote.ts",
     "compile": "hardhat compile",
     "test": "hardhat test"
   },
