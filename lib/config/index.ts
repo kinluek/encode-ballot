@@ -11,3 +11,12 @@ export function getWallet(): ethers.Wallet {
     "MNEMONIC or PRIVATE_KEY environment variable must be set to initialize wallet"
   );
 }
+
+export function getInfuraProvider(
+  network: string
+): ethers.providers.InfuraProvider {
+  return new ethers.providers.InfuraProvider(
+    network,
+    process.env.INFURA_API_KEY
+  );
+}
