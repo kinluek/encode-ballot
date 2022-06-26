@@ -10,7 +10,7 @@ async function main() {
   console.log(`Using address ${wallet.address}`);
   const provider = new ethers.providers.InfuraProvider(
     "ropsten",
-    process.env.INFURA_PROJECT_ID
+    process.env.ROPSTEN_URL
   );
   const signer = wallet.connect(provider);
   const balanceBN = await signer.getBalance();
