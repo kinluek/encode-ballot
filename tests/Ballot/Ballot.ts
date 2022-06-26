@@ -2,6 +2,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Signer } from "ethers";
 import { ethers } from "hardhat";
+// eslint-disable-next-line node/no-missing-import
 import { Ballot } from "../../typechain";
 
 const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
