@@ -2,15 +2,12 @@ import { Contract, ethers } from "ethers";
 import "dotenv/config";
 import * as ballotJson from "../../artifacts/contracts/Ballot.sol/Ballot.json";
 import { Ballot } from "../../typechain";
-import { getWallet } from "../../lib/wallet";
+import { getInfuraProvider, getWallet } from "../../lib/wallet";
 
 async function main() {
   const wallet = getWallet();
   console.log(`Using address ${wallet.address}`);
-  const provider = new ethers.providers.InfuraProvider(
-    "ropsten",
-    process.env.ROPSTEN_URL
-  );
+  const provider = getInfuraProvider("ropsten");
   const signer = wallet.connect(provider);
   const balanceBN = await signer.getBalance();
   const balance = Number(ethers.utils.formatEther(balanceBN));
