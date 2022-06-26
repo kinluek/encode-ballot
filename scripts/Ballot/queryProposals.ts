@@ -26,7 +26,11 @@ async function main() {
     try {
       const prop = await ballotContract.proposals(i);
       const propName = ethers.utils.parseBytes32String(prop.name);
-      console.log(`Proposal No. ${i + 1}: ${propName}`);
+      console.log(
+        `Proposal No. ${
+          i + 1
+        }: ${propName} - Votes: ${prop.voteCount.toNumber()}`
+      );
       i++;
     } catch (err) {
       moreProposals = false;
