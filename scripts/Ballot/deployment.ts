@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import "dotenv/config";
 import * as ballotJson from "../../artifacts/contracts/Ballot.sol/Ballot.json";
-import { getWallet } from "../../lib/wallet";
+import { getInfuraProvider, getWallet } from "../../lib/config";
 
 function convertStringArrayToBytes32(array: string[]) {
   const bytes32Array = [];
@@ -14,7 +14,7 @@ function convertStringArrayToBytes32(array: string[]) {
 async function main() {
   const wallet = getWallet();
   console.log(`Using address ${wallet.address}`);
-  const provider = ethers.providers.getDefaultProvider("ropsten");
+  const provider = getInfuraProvider("ropsten");
   const signer = wallet.connect(provider);
   const balanceBN = await signer.getBalance();
   const balance = Number(ethers.utils.formatEther(balanceBN));
