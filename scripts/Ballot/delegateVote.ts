@@ -2,7 +2,7 @@ import { Contract, ethers } from "ethers";
 import "dotenv/config";
 import * as ballotJson from "../../artifacts/contracts/Ballot.sol/Ballot.json";
 import { Ballot } from "../../typechain";
-import { getInfuraProvider, getWallet } from "../../lib/wallet";
+import { getInfuraProvider, getWallet } from "../../lib/config";
 
 async function main() {
   const wallet = getWallet();
