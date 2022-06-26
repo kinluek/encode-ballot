@@ -13,7 +13,7 @@ Encode Bootcamp: First Assignment
 ```
 "scripts": {
     "script:giveVotingRights": "ts-node --files ./scripts/Ballot/giveVotingRights.ts",
-    "script:deploy": "ts-node --files ./scripts/Ballot/deployment.ts",
+    "script:deployment": "ts-node --files ./scripts/Ballot/deployment.ts",
     "script:queryProposals": "ts-node --files ./scripts/Ballot/queryProposals.ts",
     "script:castVote": "ts-node --files ./scripts/Ballot/castVote.ts",
     "test": "hardhat test"
@@ -25,7 +25,7 @@ Example:
 
 ```bash
 # Deploy ballot contract with proposals [red, blue, green, orange]
-$ yarn script:deploy red blue green orange
+$ yarn script:deployment red blue green orange
 
 # Output:
 Using address 0x563529285A26A05a94646CA01F5f9b61f292941D

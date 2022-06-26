@@ -7,10 +7,11 @@
   "private": true,
   "scripts": {
     "script:giveVotingRights": "ts-node --files ./scripts/Ballot/giveVotingRights.ts",
-    "script:deploy": "ts-node --files ./scripts/Ballot/deployment.ts",
+    "script:deployment": "ts-node --files ./scripts/Ballot/deployment.ts",
     "script:queryProposals": "ts-node --files ./scripts/Ballot/queryProposals.ts",
     "script:castVote": "ts-node --files ./scripts/Ballot/castVote.ts",
     "script:queryResult": "ts-node --files scripts/Ballot/queryResult.ts",
+    "script:delegateVote": "ts-node --files scripts/Ballot/delegateVote.ts",
     "compile": "hardhat compile",
     "test": "hardhat test"
   },
