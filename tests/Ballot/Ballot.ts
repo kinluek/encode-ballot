@@ -146,13 +146,15 @@ describe("Ballot", function () {
   });
 
   describe("when the voter interact with the delegate function in the contract", function () {
-    it("voter should not be able to delegate if they have no right to vote", async function () {
+    it("voter with no right to vote should not increase weight of voter delegated to", async function () {
       const delegator = accounts[1];
       const delegatee = accounts[2];
       await giveRightToVote(ballotContract, delegatee.address);
-      await expect(
-        delegate(ballotContract, delegator, delegatee)
-      ).to.be.revertedWith("You must have the right to vote.");
+      let delegateeVoter = await ballotContract.voters(delegatee.address);
+      expect(delegateeVoter.weight).to.equal(BigNumber.from(1));
+      delegate(ballotContract, delegator, delegatee);
+      delegateeVoter = await ballotContract.voters(delegatee.address);
+      expect(delegateeVoter.weight).to.equal(BigNumber.from(1));
     });
 
     it("voter should not be able to delegate to voter who has no right to vote", async function () {

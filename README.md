@@ -36,6 +36,4 @@ yarn run ts-node --files .\scripts\Ballot\deployment.ts "arg1" "arg2" "arg3
 - kinluek#8883
 - e_l_l_a#9184
 - 0xefrain#5498
-- earthtospace#7202
-- qsmettu#7860
 - robtab.eth#0364
