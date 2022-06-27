@@ -2,6 +2,10 @@
 
 Encode Bootcamp: First Assignment
 
+## Report
+
+Report can be found in REPORT.md file.
+
 ## Setup
 
 1. Make sure you create a .env file with the real exported values as shown in .env.example.
